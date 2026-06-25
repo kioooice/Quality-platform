@@ -83,7 +83,7 @@ const Events: React.FC = () => {
       </Row>
 
       {/* QE-2026-001 完整处理时间线 */}
-      <Card title="QE-2026-001 事件处理时间线（演示主线）" style={{ marginBottom: 24 }}>
+      <Card title="QE-2026-001 事件处理时间线" style={{ marginBottom: 24 }}>
         <Timeline
           items={[
             { color: 'red', children: '09:20 检测中心 INS-2026-001 发现汽车连接器A 针孔异常（置信度 96.8%）' },

@@ -57,7 +57,7 @@ const Cases: React.FC = () => {
               <Card size="small" style={{ background: c.id === 'CASE-2026-018' ? '#fff7e6' : '#fafafa', border: c.id === 'CASE-2026-018' ? '1px solid #fa8c16' : undefined }}>
                 <div style={{ fontWeight: 600, marginBottom: 8 }}>
                   {c.id} <Tag color="red">{c.abnormal}</Tag>
-                  {c.id === 'CASE-2026-018' && <Tag color="orange">本次演示案例</Tag>}
+                  {c.id === 'CASE-2026-018' && <Tag color="orange">最新案例</Tag>}
                 </div>
                 <div style={{ marginBottom: 4 }}><span style={{ color: '#888' }}>产品：</span>{c.product}</div>
                 <div style={{ marginBottom: 4 }}><span style={{ color: '#888' }}>根因：</span>{c.rootCause}</div>
