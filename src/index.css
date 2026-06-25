@@ -16,102 +16,66 @@ body {
   height: 100vh;
 }
 
-/* Global styles for Ant Design */
-.ant-layout {
-  min-height: 100vh;
-}
+.ant-layout { min-height: 100vh; }
+.ant-layout-sider { min-height: 100vh; }
+.ant-layout-content { min-height: 280px; }
 
-.ant-layout-sider {
-  min-height: 100vh;
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
 
-.ant-layout-content {
-  min-height: 280px;
-}
-
-/* Scrollbar styles */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* Card styles */
 .ant-card {
   border-radius: 4px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 6px -1px rgba(0,0,0,0.02), 0 2px 4px 0 rgba(0,0,0,0.02);
 }
+.ant-table { border-radius: 4px; }
+.ant-btn { border-radius: 4px; }
+.ant-input { border-radius: 4px; }
+.ant-tag { border-radius: 2px; }
+.ant-menu-item { border-radius: 4px; }
 
-/* Table styles */
-.ant-table {
-  border-radius: 4px;
-}
-
-/* Button styles */
-.ant-btn {
-  border-radius: 4px;
-}
-
-/* Input styles */
-.ant-input {
-  border-radius: 4px;
-}
-
-/* Tag styles */
-.ant-tag {
-  border-radius: 2px;
-}
-
-/* Menu styles */
-.ant-menu-item {
-  border-radius: 4px;
-}
-
-/* Header styles */
 .ant-layout-header {
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   z-index: 10;
 }
 
-/* Content padding */
-.ant-layout-content {
-  padding: 24px;
-  margin: 24px;
-  background: #fff;
-  border-radius: 4px;
+.ant-statistic-title { color: rgba(0,0,0,0.45); font-size: 14px; }
+.ant-statistic-content { color: rgba(0,0,0,0.85); font-size: 24px; }
+.ant-table-thead > tr > th { background: #fafafa; font-weight: 600; }
+.ant-card-head-title { font-weight: 600; }
+
+/* ========== Mobile Responsive ========== */
+@media (max-width: 767px) {
+  .ant-statistic-title { font-size: 12px; }
+  .ant-statistic-content { font-size: 20px; }
+
+  .ant-card-body { padding: 12px !important; }
+  .ant-card-head { padding: 0 12px; min-height: 40px; }
+  .ant-card-head-title { font-size: 14px; padding: 8px 0; }
+
+  .ant-table { font-size: 12px; }
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td { padding: 8px 6px; }
+
+  .ant-alert { padding: 8px 12px; font-size: 12px; }
+  .ant-alert-message { font-size: 12px; }
+
+  .ant-timeline { font-size: 13px; }
+
+  .ant-steps { font-size: 12px; }
+  .ant-steps-item-title { font-size: 12px !important; }
+
+  .ant-select-selector { font-size: 12px !important; }
+
+  .desktop-only { display: none !important; }
+
+  /* Prevent horizontal overflow */
+  .app-content { overflow-x: hidden; }
+  .ant-table-wrapper { overflow-x: auto; }
 }
 
-/* Statistics styles */
-.ant-statistic-title {
-  color: rgba(0, 0, 0, 0.45);
-  font-size: 14px;
-}
-
-.ant-statistic-content {
-  color: rgba(0, 0, 0, 0.85);
-  font-size: 24px;
-}
-
-/* Table header styles */
-.ant-table-thead > tr > th {
-  background: #fafafa;
-  font-weight: 600;
-}
-
-/* Card title styles */
-.ant-card-head-title {
-  font-weight: 600;
+@media (min-width: 768px) and (max-width: 1023px) {
+  .ant-statistic-content { font-size: 22px; }
 }

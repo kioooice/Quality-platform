@@ -1,5 +1,5 @@
-import React from 'react';
-import { Row, Col, Card, Statistic, Table, Tag, Progress, Alert } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Row, Col, Card, Statistic, Table, Tag, Progress, Alert, Space } from 'antd';
 import {
   ExclamationCircleOutlined,
   ClockCircleOutlined,
@@ -12,8 +12,62 @@ import {
 } from '@ant-design/icons';
 import { useRole } from '../context/RoleContext';
 
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+};
+
+// Mobile card list for events
+const MobileEventList: React.FC<{ data: Array<{ id: string; product: string; abnormal: string; severity: string; status: string; dept?: string; updated?: string }> }> = ({ data }) => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {data.map((item) => (
+        <Card key={item.id} size="small" style={{ borderLeft: item.severity === '高' ? '3px solid #cf1322' : '3px solid #fa8c16' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+            <span style={{ fontWeight: 600, fontSize: 13 }}>{item.id}</span>
+            <Tag color={item.severity === '高' ? 'red' : 'orange'} style={{ fontSize: 11 }}>{item.severity}</Tag>
+          </div>
+          <div style={{ fontSize: 13, marginBottom: 4 }}>{item.product} · {item.abnormal}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Tag color={item.status.includes('确认') ? 'orange' : item.status.includes('处理') ? 'blue' : 'default'} style={{ fontSize: 11 }}>{item.status}</Tag>
+            <Space size={8}>
+              <a style={{ fontSize: 12 }}>查看</a>
+              {item.id === 'QE-2026-001' && <a style={{ fontSize: 12 }}>AI分析</a>}
+            </Space>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+};
+
+// Mobile card list for AI tasks
+const MobileAITaskList: React.FC<{ data: Array<{ id: string; event: string; product: string; abnormal: string; reason: string; cases: number }> }> = ({ data }) => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {data.map((item) => (
+        <Card key={item.id} size="small" style={{ borderLeft: '3px solid #d46b08' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+            <span style={{ fontWeight: 600, fontSize: 13 }}>{item.id}</span>
+            <a style={{ fontSize: 12 }}>{item.event}</a>
+          </div>
+          <div style={{ fontSize: 13, marginBottom: 4 }}>{item.product} · <Tag color="red" style={{ fontSize: 11 }}>{item.abnormal}</Tag></div>
+          <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>AI建议：{item.reason}</div>
+          <div style={{ fontSize: 12, color: '#999' }}>相似案例 {item.cases} 条</div>
+        </Card>
+      ))}
+    </div>
+  );
+};
+
 // ========== Admin View ==========
 const AdminView: React.FC = () => {
+  const isMobile = useIsMobile();
   const pendingEvents = [
     { key: '1', id: 'QE-2026-001', product: '汽车连接器A', batch: 'B-20260625-01', abnormal: '针孔', severity: '高', status: '待工程师确认', dept: '质量部 / 生产部', updated: '2026-06-25 09:25' },
     { key: '2', id: 'QE-2026-002', product: '新能源端子B', batch: 'B-20260625-02', abnormal: '漏镀', severity: '高', status: '待工程师确认', dept: '生产部', updated: '2026-06-25 08:50' },
@@ -82,18 +136,18 @@ const AdminView: React.FC = () => {
   return (
     <>
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="重复分析减少" value={36} suffix="次" valueStyle={{ fontSize: 20 }} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="平均排查时间" value={4.2} suffix="小时" valueStyle={{ fontSize: 20 }} prefix={<ThunderboltOutlined />} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="自动生成报告" value={18} suffix="份" valueStyle={{ fontSize: 20 }} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="新增经验案例" value={12} suffix="条" valueStyle={{ fontSize: 20 }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="重复分析减少" value={36} suffix="次" valueStyle={{ fontSize: 20 }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="平均排查时间" value={4.2} suffix="小时" valueStyle={{ fontSize: 20 }} prefix={<ThunderboltOutlined />} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="自动生成报告" value={18} suffix="份" valueStyle={{ fontSize: 20 }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="新增经验案例" value={12} suffix="条" valueStyle={{ fontSize: 20 }} /></Card></Col>
       </Row>
 
-      <Card title="今日待处理质量事件" style={{ marginBottom: 24 }} bodyStyle={{ padding: '12px 16px' }}>
-        <Table columns={eventCols} dataSource={pendingEvents} pagination={false} size="small" scroll={{ x: 1100 }} />
+      <Card title="今日待处理质量事件" style={{ marginBottom: 24 }} bodyStyle={{ padding: isMobile ? '8px' : '12px 16px' }}>
+        {isMobile ? <MobileEventList data={pendingEvents} /> : <Table columns={eventCols} dataSource={pendingEvents} pagination={false} size="small" scroll={{ x: 1100 }} />}
       </Card>
 
-      <Card title={<><RobotOutlined style={{ marginRight: 8 }} />AI 待确认分析任务</>} style={{ marginBottom: 24 }} bodyStyle={{ padding: '12px 16px' }}>
-        <Table columns={aiCols} dataSource={aiPending} pagination={false} size="small" scroll={{ x: 1000 }} />
+      <Card title={<><RobotOutlined style={{ marginRight: 8 }} />AI 待确认分析任务</>} style={{ marginBottom: 24 }} bodyStyle={{ padding: isMobile ? '8px' : '12px 16px' }}>
+        {isMobile ? <MobileAITaskList data={aiPending} /> : <Table columns={aiCols} dataSource={aiPending} pagination={false} size="small" scroll={{ x: 1000 }} />}
       </Card>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
@@ -136,18 +190,18 @@ const AdminView: React.FC = () => {
         <Table columns={reviewCols} dataSource={pendingReview} pagination={false} size="small" />
       </Card>
 
-      <Card title={<><WarningOutlined style={{ color: '#d46b08', marginRight: 8 }} />质量风险提醒</>} style={{ marginBottom: 24 }} bodyStyle={{ padding: '12px 16px' }}>
+      <Card title={<><WarningOutlined style={{ color: '#d46b08', marginRight: 8 }} />质量风险提醒</>} style={{ marginBottom: 24 }} bodyStyle={{ padding: isMobile ? '8px' : '12px 16px' }}>
         <Alert message="针孔异常本周重复发生 12 次，建议建立标准处理方案" type="error" showIcon style={{ marginBottom: 8 }} />
         <Alert message="新能源端子B 漏镀问题连续出现，建议复查前处理工序" type="error" showIcon style={{ marginBottom: 8 }} />
         <Alert message="手机中框D 色差问题与镀液参数波动有关，建议关注批次数据" type="warning" showIcon />
       </Card>
 
       <Card title={<><RobotOutlined style={{ marginRight: 8 }} />AI 辅助工作状态</>} size="small">
-        <Row gutter={[24, 12]}>
-          <Col xs={12} sm={6}><div style={{ textAlign: 'center', padding: '8px 0' }}><div style={{ fontSize: 24, fontWeight: 600, color: '#d46b08' }}>3</div><div style={{ color: '#666', fontSize: 12 }}>待分析事件</div></div></Col>
-          <Col xs={12} sm={6}><div style={{ textAlign: 'center', padding: '8px 0' }}><div style={{ fontSize: 24, fontWeight: 600, color: '#3f8600' }}>18</div><div style={{ color: '#666', fontSize: 12 }}>已完成AI分析</div></div></Col>
-          <Col xs={12} sm={6}><div style={{ textAlign: 'center', padding: '8px 0' }}><div style={{ fontSize: 24, fontWeight: 600, color: '#1890ff' }}>5</div><div style={{ color: '#666', fontSize: 12 }}>待工程师确认</div></div></Col>
-          <Col xs={12} sm={6}><div style={{ textAlign: 'center', padding: '8px 0' }}><div style={{ fontSize: 24, fontWeight: 600, color: '#722ed1' }}>7</div><div style={{ color: '#666', fontSize: 12 }}>已形成案例</div></div></Col>
+        <Row gutter={[isMobile ? 12 : 24, 12]}>
+          <Col xs={12} sm={6}><div style={{ textAlign: 'center', padding: '8px 0' }}><div style={{ fontSize: isMobile ? 20 : 24, fontWeight: 600, color: '#d46b08' }}>3</div><div style={{ color: '#666', fontSize: 12 }}>待分析事件</div></div></Col>
+          <Col xs={12} sm={6}><div style={{ textAlign: 'center', padding: '8px 0' }}><div style={{ fontSize: isMobile ? 20 : 24, fontWeight: 600, color: '#3f8600' }}>18</div><div style={{ color: '#666', fontSize: 12 }}>已完成AI分析</div></div></Col>
+          <Col xs={12} sm={6}><div style={{ textAlign: 'center', padding: '8px 0' }}><div style={{ fontSize: isMobile ? 20 : 24, fontWeight: 600, color: '#1890ff' }}>5</div><div style={{ color: '#666', fontSize: 12 }}>待工程师确认</div></div></Col>
+          <Col xs={12} sm={6}><div style={{ textAlign: 'center', padding: '8px 0' }}><div style={{ fontSize: isMobile ? 20 : 24, fontWeight: 600, color: '#722ed1' }}>7</div><div style={{ color: '#666', fontSize: 12 }}>已形成案例</div></div></Col>
         </Row>
       </Card>
     </>
@@ -184,19 +238,19 @@ const InspectorView: React.FC = () => {
   return (
     <>
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="今日待检测任务" value={18} suffix="项" /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="已完成检测" value={12} suffix="项" valueStyle={{ color: '#3f8600' }} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="发现异常" value={3} suffix="项" valueStyle={{ color: '#cf1322' }} prefix={<ExclamationCircleOutlined />} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="待复核结果" value={2} suffix="项" valueStyle={{ color: '#d46b08' }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="今日待检测任务" value={18} suffix="项" /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="已完成检测" value={12} suffix="项" valueStyle={{ color: '#3f8600' }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="发现异常" value={3} suffix="项" valueStyle={{ color: '#cf1322' }} prefix={<ExclamationCircleOutlined />} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="待复核结果" value={2} suffix="项" valueStyle={{ color: '#d46b08' }} /></Card></Col>
       </Row>
 
       {/* 异常检测结果 */}
       <Card title="异常检测结果" style={{ marginBottom: 24, borderLeft: '3px solid #cf1322' }} extra={<ExperimentOutlined style={{ color: '#cf1322' }} />}>
         <Row gutter={[16, 16]}>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>产品</div><div style={{ fontWeight: 500 }}>汽车连接器A</div></Col>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>批次</div><div>B-20260625-01</div></Col>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>异常类型</div><div><Tag color="red">针孔</Tag></div></Col>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>AI识别置信度</div><div style={{ fontWeight: 600, color: '#cf1322' }}>96.8%</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>产品</div><div style={{ fontWeight: 500 }}>汽车连接器A</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>批次</div><div>B-20260625-01</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>异常类型</div><div><Tag color="red">针孔</Tag></div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>AI识别置信度</div><div style={{ fontWeight: 600, color: '#cf1322' }}>96.8%</div></Col>
         </Row>
         <div style={{ marginTop: 12, padding: '8px 12px', background: '#fff1f0', borderRadius: 4, fontSize: 13, borderLeft: '3px solid #cf1322' }}>
           建议动作：提交质量事件 QE-2026-001，进入异常分析流程
@@ -231,10 +285,10 @@ const QualityEngineerView: React.FC = () => {
   return (
     <>
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="待确认AI分析" value={5} suffix="项" valueStyle={{ color: '#d46b08' }} prefix={<RobotOutlined />} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="待判断根因" value={3} suffix="项" valueStyle={{ color: '#cf1322' }} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="待制定处置方案" value={4} suffix="项" valueStyle={{ color: '#1890ff' }} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="待归档案例" value={2} suffix="项" valueStyle={{ color: '#722ed1' }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="待确认AI分析" value={5} suffix="项" valueStyle={{ color: '#d46b08' }} prefix={<RobotOutlined />} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="待判断根因" value={3} suffix="项" valueStyle={{ color: '#cf1322' }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="待制定处置方案" value={4} suffix="项" valueStyle={{ color: '#1890ff' }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="待归档案例" value={2} suffix="项" valueStyle={{ color: '#722ed1' }} /></Card></Col>
       </Row>
 
       <Card title="待处理质量事件" style={{ marginBottom: 24 }} bodyStyle={{ padding: '12px 16px' }}>
@@ -293,10 +347,10 @@ const ProcessEngineerView: React.FC = () => {
   return (
     <>
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="待排查工艺异常" value={4} suffix="项" valueStyle={{ color: '#d46b08' }} prefix={<ToolOutlined />} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="涉及前处理问题" value={2} suffix="项" valueStyle={{ color: '#cf1322' }} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="待验证改善措施" value={3} suffix="项" valueStyle={{ color: '#1890ff' }} /></Card></Col>
-        <Col xs={12} sm={6}><Card size="small"><Statistic title="已反馈工艺建议" value={6} suffix="条" valueStyle={{ color: '#3f8600' }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="待排查工艺异常" value={4} suffix="项" valueStyle={{ color: '#d46b08' }} prefix={<ToolOutlined />} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="涉及前处理问题" value={2} suffix="项" valueStyle={{ color: '#cf1322' }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="待验证改善措施" value={3} suffix="项" valueStyle={{ color: '#1890ff' }} /></Card></Col>
+        <Col xs={24} sm={12} md={6}><Card size="small"><Statistic title="已反馈工艺建议" value={6} suffix="条" valueStyle={{ color: '#3f8600' }} /></Card></Col>
       </Row>
 
       <Card title="工艺相关异常" style={{ marginBottom: 24 }} bodyStyle={{ padding: '12px 16px' }}>

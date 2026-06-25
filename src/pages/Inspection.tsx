@@ -53,15 +53,15 @@ const Inspection: React.FC = () => {
       {/* 检测结果示例 - QE-2026-001 来源 */}
       <Card title="异常检测结果：INS-2026-001" style={{ marginBottom: 24, borderLeft: '3px solid #cf1322' }} extra={<ThunderboltOutlined style={{ color: '#d46b08' }} />}>
         <Row gutter={[16, 16]}>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>产品</div><div style={{ fontWeight: 500 }}>汽车连接器A</div></Col>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>批次</div><div style={{ fontWeight: 500 }}>B-20260625-01</div></Col>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>检测类型</div><div>外观检测</div></Col>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>检测项目</div><div>针孔识别</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>产品</div><div style={{ fontWeight: 500 }}>汽车连接器A</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>批次</div><div style={{ fontWeight: 500 }}>B-20260625-01</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>检测类型</div><div>外观检测</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>检测项目</div><div>针孔识别</div></Col>
         </Row>
         <Row gutter={[16, 16]} style={{ marginTop: 12 }}>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>AI识别结果</div><div><Tag color="red">发现针孔</Tag></div></Col>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>置信度</div><div style={{ fontWeight: 600, color: '#cf1322' }}>96.8%</div></Col>
-          <Col xs={12} sm={6}><div style={{ color: '#888', fontSize: 12 }}>建议动作</div><div>进入异常分析</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>AI识别结果</div><div><Tag color="red">发现针孔</Tag></div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>置信度</div><div style={{ fontWeight: 600, color: '#cf1322' }}>96.8%</div></Col>
+          <Col xs={12} sm={8} md={6}><div style={{ color: '#888', fontSize: 12 }}>建议动作</div><div>进入异常分析</div></Col>
           <Col xs={12} sm={6}>
             <div style={{ color: '#888', fontSize: 12 }}>操作</div>
             <Space size="small">

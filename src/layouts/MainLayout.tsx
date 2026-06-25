@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Layout, Menu, theme, Avatar, Dropdown, Space, Select, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Layout, Menu, theme, Avatar, Dropdown, Space, Select, Tag, Drawer, Button } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   DashboardOutlined,
@@ -12,6 +12,7 @@ import {
   SettingOutlined,
   UserOutlined,
   LogoutOutlined,
+  MenuOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { RoleProvider, useRole, roles, type RoleId } from '../context/RoleContext';
@@ -48,8 +49,20 @@ const roleColorMap: Record<RoleId, string> = {
   process_engineer: '#fa8c16',
 };
 
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+};
+
 const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const location = useLocation();
   const { currentRole, setRole } = useRole();
@@ -59,75 +72,113 @@ const AppLayout: React.FC = () => {
 
   const onMenuClick: MenuProps['onClick'] = (e) => {
     navigate(e.key);
+    if (isMobile) setDrawerOpen(false);
   };
+
+  const menuContent = (
+    <Menu
+      theme={isMobile ? 'light' : 'dark'}
+      mode="inline"
+      selectedKeys={[location.pathname]}
+      items={menuItems}
+      onClick={onMenuClick}
+      style={isMobile ? { border: 'none' } : undefined}
+    />
+  );
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-        style={{ background: '#001529' }}
-      >
-        <div
-          style={{
-            height: 64,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: collapsed ? 16 : 18,
-            fontWeight: 'bold',
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
-          }}
+      {/* Desktop Sider */}
+      {!isMobile && (
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={(value) => setCollapsed(value)}
+          style={{ background: '#001529' }}
         >
-          {collapsed ? 'QM' : 'AI质量管理系统'}
-        </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={onMenuClick}
-        />
-      </Sider>
+          <div
+            style={{
+              height: 64,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontSize: collapsed ? 16 : 18,
+              fontWeight: 'bold',
+              borderBottom: '1px solid rgba(255,255,255,0.1)',
+            }}
+          >
+            {collapsed ? 'QM' : 'AI质量管理系统'}
+          </div>
+          {menuContent}
+        </Sider>
+      )}
+
+      {/* Mobile Drawer */}
+      {isMobile && (
+        <Drawer
+          title="AI质量管理系统"
+          placement="left"
+          onClose={() => setDrawerOpen(false)}
+          open={drawerOpen}
+          width={260}
+          styles={{ body: { padding: 0 } }}
+        >
+          {menuContent}
+        </Drawer>
+      )}
+
       <Layout>
         <Header
           style={{
-            padding: '0 24px',
+            padding: isMobile ? '0 12px' : '0 24px',
             background: colorBgContainer,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             borderBottom: '1px solid #f0f0f0',
+            height: isMobile ? 48 : 64,
+            lineHeight: isMobile ? '48px' : '64px',
+            position: 'sticky',
+            top: 0,
+            zIndex: 100,
           }}
         >
-          <div style={{ fontSize: 16, fontWeight: 500 }}>
-            AI质量管理与异常追溯系统
-          </div>
-          <Space size={16}>
+          <Space size={8}>
+            {isMobile && (
+              <Button
+                type="text"
+                icon={<MenuOutlined />}
+                onClick={() => setDrawerOpen(true)}
+                style={{ fontSize: 18, width: 36, height: 36 }}
+              />
+            )}
+            <div style={{ fontSize: isMobile ? 14 : 16, fontWeight: 500, whiteSpace: 'nowrap' }}>
+              {isMobile ? 'AI质量系统' : 'AI质量管理与异常追溯系统'}
+            </div>
+          </Space>
+
+          <Space size={isMobile ? 8 : 16}>
             <Select
               value={currentRole.id}
               onChange={(val) => setRole(val as RoleId)}
-              style={{ width: 150 }}
+              style={{ width: isMobile ? 100 : 150 }}
               size="small"
               options={roles.map((r) => ({
                 value: r.id,
-                label: (
-                  <Space size={6}>
-                    <span>{r.name}</span>
-                  </Space>
-                ),
+                label: r.name,
               }))}
             />
-            <Tag color={roleColorMap[currentRole.id]} style={{ margin: 0 }}>
-              {currentRole.name}
-            </Tag>
+            {!isMobile && (
+              <Tag color={roleColorMap[currentRole.id]} style={{ margin: 0 }}>
+                {currentRole.name}
+              </Tag>
+            )}
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
               <Space style={{ cursor: 'pointer' }}>
                 <Avatar
-                  size={28}
-                  style={{ backgroundColor: roleColorMap[currentRole.id], fontSize: 13 }}
+                  size={isMobile ? 24 : 28}
+                  style={{ backgroundColor: roleColorMap[currentRole.id], fontSize: isMobile ? 11 : 13 }}
                 >
                   {currentRole.avatar}
                 </Avatar>
@@ -135,12 +186,14 @@ const AppLayout: React.FC = () => {
             </Dropdown>
           </Space>
         </Header>
+
         <Content
+          className="app-content"
           style={{
-            margin: 24,
-            padding: 24,
+            margin: isMobile ? 8 : 24,
+            padding: isMobile ? 12 : 24,
             background: colorBgContainer,
-            borderRadius: borderRadiusLG,
+            borderRadius: isMobile ? 8 : borderRadiusLG,
             minHeight: 280,
           }}
         >
