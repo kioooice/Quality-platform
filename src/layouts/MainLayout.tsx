@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, theme, Avatar, Dropdown, Space } from 'antd';
+import { Layout, Menu, theme, Avatar, Dropdown, Space, Select, Tag } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   DashboardOutlined,
@@ -14,23 +14,14 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { RoleProvider, useRole, roles, type RoleId } from '../context/RoleContext';
 
 const { Header, Sider, Content } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem;
+function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
+  return { key, icon, children, label } as MenuItem;
 }
 
 const menuItems: MenuItem[] = [
@@ -45,25 +36,23 @@ const menuItems: MenuItem[] = [
 ];
 
 const userMenuItems: MenuProps['items'] = [
-  {
-    key: 'profile',
-    icon: <UserOutlined />,
-    label: '个人中心',
-  },
-  {
-    type: 'divider',
-  },
-  {
-    key: 'logout',
-    icon: <LogoutOutlined />,
-    label: '退出登录',
-  },
+  { key: 'profile', icon: <UserOutlined />, label: '个人中心' },
+  { type: 'divider' },
+  { key: 'logout', icon: <LogoutOutlined />, label: '退出登录' },
 ];
 
-const MainLayout: React.FC = () => {
+const roleColorMap: Record<RoleId, string> = {
+  admin: '#1890ff',
+  inspector: '#52c41a',
+  quality_engineer: '#722ed1',
+  process_engineer: '#fa8c16',
+};
+
+const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentRole, setRole } = useRole();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -87,7 +76,7 @@ const MainLayout: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#fff',
-            fontSize: collapsed ? 16 : 20,
+            fontSize: collapsed ? 16 : 18,
             fontWeight: 'bold',
             borderBottom: '1px solid rgba(255,255,255,0.1)',
           }}
@@ -116,16 +105,39 @@ const MainLayout: React.FC = () => {
           <div style={{ fontSize: 16, fontWeight: 500 }}>
             AI质量管理与异常追溯系统
           </div>
-          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-            <Space style={{ cursor: 'pointer' }}>
-              <Avatar icon={<UserOutlined />} />
-              <span>管理员</span>
-            </Space>
-          </Dropdown>
+          <Space size={16}>
+            <Select
+              value={currentRole.id}
+              onChange={(val) => setRole(val as RoleId)}
+              style={{ width: 150 }}
+              size="small"
+              options={roles.map((r) => ({
+                value: r.id,
+                label: (
+                  <Space size={6}>
+                    <span>{r.name}</span>
+                  </Space>
+                ),
+              }))}
+            />
+            <Tag color={roleColorMap[currentRole.id]} style={{ margin: 0 }}>
+              {currentRole.name}
+            </Tag>
+            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+              <Space style={{ cursor: 'pointer' }}>
+                <Avatar
+                  size={28}
+                  style={{ backgroundColor: roleColorMap[currentRole.id], fontSize: 13 }}
+                >
+                  {currentRole.avatar}
+                </Avatar>
+              </Space>
+            </Dropdown>
+          </Space>
         </Header>
         <Content
           style={{
-            margin: '24px',
+            margin: 24,
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
@@ -138,5 +150,11 @@ const MainLayout: React.FC = () => {
     </Layout>
   );
 };
+
+const MainLayout: React.FC = () => (
+  <RoleProvider>
+    <AppLayout />
+  </RoleProvider>
+);
 
 export default MainLayout;
