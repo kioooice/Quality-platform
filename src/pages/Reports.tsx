@@ -1,214 +1,64 @@
 import React from 'react';
-import { Card, Row, Col, Statistic, Table, Tag, Button, Space, Input, DatePicker } from 'antd';
-import { PlusOutlined, SearchOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Statistic, Table, Tag, Input, Alert } from 'antd';
+import { SearchOutlined, FileTextOutlined, DownloadOutlined, EyeOutlined, ThunderboltOutlined } from '@ant-design/icons';
 
-const { RangePicker } = DatePicker;
-
-// Mock data for reports
 const reports = [
-  {
-    key: '1',
-    id: 'RPT-2024-001',
-    title: '2024年1月质量月报',
-    type: '月报',
-    period: '2024-01',
-    status: '已发布',
-    author: '质量部',
-    createTime: '2024-01-31',
-    publishTime: '2024-02-01',
-    downloads: 456,
-    pages: 28,
-  },
-  {
-    key: '2',
-    id: 'RPT-2024-002',
-    title: '汽车连接器A质量分析报告',
-    type: '专项报告',
-    period: '2024-01-15',
-    status: '已发布',
-    author: '质量部',
-    createTime: '2024-01-16',
-    publishTime: '2024-01-16',
-    downloads: 123,
-    pages: 15,
-  },
-  {
-    key: '3',
-    id: 'RPT-2024-003',
-    title: '2023年第四季度质量报告',
-    type: '季报',
-    period: '2023-Q4',
-    status: '已发布',
-    author: '质量部',
-    createTime: '2024-01-05',
-    publishTime: '2024-01-10',
-    downloads: 789,
-    pages: 42,
-  },
-  {
-    key: '4',
-    id: 'RPT-2024-004',
-    title: '2024年1月第二周质量周报',
-    type: '周报',
-    period: '2024-W02',
-    status: '草稿',
-    author: '质量部',
-    createTime: '2024-01-14',
-    publishTime: '-',
-    downloads: 0,
-    pages: 12,
-  },
+  { key: '1', id: 'RPT-2026-018', title: 'QE-2026-001 汽车连接器A 针孔异常追溯报告', event: 'QE-2026-001', product: '汽车连接器A', type: '异常追溯报告', method: 'AI生成初稿', status: '已发布', time: '2026-06-25' },
+  { key: '2', id: 'RPT-2026-017', title: 'QE-2026-002 新能源端子B 漏镀 AI辅助分析报告', event: 'QE-2026-002', product: '新能源端子B', type: 'AI辅助分析报告', method: 'AI生成初稿', status: '待确认', time: '2026-06-25' },
+  { key: '3', id: 'RPT-2026-015', title: '汽车连接器A 产品质量履历', event: '-', product: '汽车连接器A', type: '产品质量履历', method: '系统自动汇总', status: '已发布', time: '2026-06-24' },
+  { key: '4', id: 'RPT-2026-012', title: '2026年6月月度质量分析报告', event: '-', product: '-', type: '月度质量分析报告', method: '工程师整理', status: '已发布', time: '2026-06-23' },
+  { key: '5', id: 'RPT-2026-010', title: '客户质量说明 - PCB连接器C 麻点问题', event: 'QE-2026-003', product: 'PCB连接器C', type: '客户质量说明', method: '工程师整理', status: '待确认', time: '2026-06-22' },
 ];
 
 const columns = [
-  {
-    title: '报告编号',
-    dataIndex: 'id',
-    key: 'id',
-    width: 130,
-  },
-  {
-    title: '报告标题',
-    dataIndex: 'title',
-    key: 'title',
-    width: 250,
-  },
-  {
-    title: '类型',
-    dataIndex: 'type',
-    key: 'type',
-    width: 100,
-    render: (type: string) => {
-      let color = '';
-      switch (type) {
-        case '月报':
-          color = 'blue';
-          break;
-        case '季报':
-          color = 'purple';
-          break;
-        case '周报':
-          color = 'cyan';
-          break;
-        case '专项报告':
-          color = 'orange';
-          break;
-        default:
-          color = 'default';
-      }
-      return <Tag color={color}>{type}</Tag>;
-    },
-  },
-  {
-    title: '报告周期',
-    dataIndex: 'period',
-    key: 'period',
-    width: 120,
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    key: 'status',
-    width: 100,
-    render: (status: string) => {
-      const color = status === '已发布' ? 'green' : 'orange';
-      return <Tag color={color}>{status}</Tag>;
-    },
-  },
-  {
-    title: '作者',
-    dataIndex: 'author',
-    key: 'author',
-    width: 100,
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createTime',
-    key: 'createTime',
-    width: 120,
-  },
-  {
-    title: '发布时间',
-    dataIndex: 'publishTime',
-    key: 'publishTime',
-    width: 120,
-  },
-  {
-    title: '下载次数',
-    dataIndex: 'downloads',
-    key: 'downloads',
-    width: 100,
-  },
-  {
-    title: '页数',
-    dataIndex: 'pages',
-    key: 'pages',
-    width: 80,
-  },
-  {
-    title: '操作',
-    key: 'action',
-    width: 150,
-    render: () => (
-      <Space size="middle">
-        <Button type="link" icon={<EyeOutlined />}>
-          查看
-        </Button>
-        <Button type="link" icon={<DownloadOutlined />}>
-          下载
-        </Button>
-      </Space>
-    ),
-  },
+  { title: '报告编号', dataIndex: 'id', key: 'id', width: 130 },
+  { title: '报告名称', dataIndex: 'title', key: 'title', width: 300 },
+  { title: '关联事件', dataIndex: 'event', key: 'event', width: 120, render: (v: string) => v === '-' ? <span style={{ color: '#ccc' }}>-</span> : <a>{v}</a> },
+  { title: '产品', dataIndex: 'product', key: 'product', width: 120 },
+  { title: '报告类型', dataIndex: 'type', key: 'type', width: 140, render: (v: string) => {
+    const map: Record<string, string> = { '异常追溯报告': 'red', 'AI辅助分析报告': 'blue', '产品质量履历': 'green', '月度质量分析报告': 'purple', '客户质量说明': 'orange' };
+    return <Tag color={map[v] || 'default'}>{v}</Tag>;
+  }},
+  { title: '生成方式', dataIndex: 'method', key: 'method', width: 120, render: (v: string) => <Tag color={v === 'AI生成初稿' ? 'blue' : v === '系统自动汇总' ? 'green' : 'default'}>{v}</Tag> },
+  { title: '状态', dataIndex: 'status', key: 'status', width: 90, render: (v: string) => <Tag color={v === '已发布' ? 'green' : 'orange'}>{v}</Tag> },
+  { title: '生成时间', dataIndex: 'time', key: 'time', width: 100 },
+  { title: '操作', key: 'action', width: 120, render: () => (
+    <span>
+      <a style={{ marginRight: 12 }}><EyeOutlined /> 查看</a>
+      <a><DownloadOutlined /> 下载</a>
+    </span>
+  )},
 ];
 
 const Reports: React.FC = () => {
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h2>报告中心</h2>
-        <Button type="primary" icon={<PlusOutlined />}>
-          生成新报告
-        </Button>
       </div>
 
-      {/* 统计卡片 */}
+      <Alert
+        message="本模块价值"
+        description="统一管理异常追溯报告、AI分析报告和产品质量履历，节省报告整理时间，降低追溯资料缺失风险。"
+        type="info"
+        showIcon
+        icon={<FileTextOutlined />}
+        style={{ marginBottom: 24 }}
+      />
+
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic title="报告总数" value={reports.length} />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic title="已发布" value={reports.filter(r => r.status === '已发布').length} />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic title="本月新增" value={2} />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic title="总下载量" value={reports.reduce((sum, r) => sum + r.downloads, 0)} />
-          </Card>
-        </Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="本月自动生成报告" value={18} suffix="份" valueStyle={{ color: '#1890ff' }} /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="节省整理时间" value={32} suffix="小时" valueStyle={{ color: '#3f8600' }} prefix={<ThunderboltOutlined />} /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="已关联质量事件" value={27} suffix="个" /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="待确认报告" value={4} suffix="份" valueStyle={{ color: '#d46b08' }} /></Card></Col>
       </Row>
 
-      {/* 搜索和筛选 */}
       <Card style={{ marginBottom: 24 }}>
-        <Space>
-          <Input placeholder="搜索报告" prefix={<SearchOutlined />} style={{ width: 200 }} />
-          <RangePicker style={{ width: 250 }} />
-          <Button>搜索</Button>
-          <Button>重置</Button>
-        </Space>
+        <Input placeholder="搜索报告名称或编号" prefix={<SearchOutlined />} style={{ width: 300 }} />
       </Card>
 
-      {/* 报告列表 */}
-      <Card>
-        <Table columns={columns} dataSource={reports} pagination={{ pageSize: 10 }} />
+      <Card title="报告列表">
+        <Table columns={columns} dataSource={reports} pagination={false} scroll={{ x: 1300 }} />
       </Card>
     </div>
   );
