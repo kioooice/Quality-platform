@@ -1,6 +1,9 @@
 @echo off
 chcp 65001 >nul 2>&1
 title AI质量管理系统
+
+:menu
+cls
 echo.
 echo ========================================
 echo    AI质量管理系统 - 脚本启动器
@@ -16,7 +19,6 @@ echo.
 echo ========================================
 echo.
 
-:choice
 set /p choice=请选择操作 [0-5]:
 
 if "%choice%"=="1" goto dev
@@ -26,7 +28,8 @@ if "%choice%"=="4" goto install
 if "%choice%"=="5" goto lint
 if "%choice%"=="0" goto exit
 echo 无效选择，请重新输入
-goto choice
+pause
+goto menu
 
 :dev
 echo.
@@ -35,7 +38,8 @@ echo 访问地址: http://localhost:5173
 echo 按 Ctrl+C 停止服务器
 echo.
 call npm run dev
-goto end
+pause
+goto menu
 
 :build
 echo.
@@ -44,7 +48,7 @@ echo.
 call npm run build
 echo.
 pause
-goto end
+goto menu
 
 :preview
 echo.
@@ -53,7 +57,8 @@ echo 访问地址: http://localhost:4173
 echo 按 Ctrl+C 停止服务器
 echo.
 call npm run preview
-goto end
+pause
+goto menu
 
 :install
 echo.
@@ -62,7 +67,7 @@ echo.
 call npm install
 echo.
 pause
-goto end
+goto menu
 
 :lint
 echo.
@@ -71,11 +76,9 @@ echo.
 call npm run lint
 echo.
 pause
-goto end
+goto menu
 
 :exit
 echo 再见!
-exit /b 0
-
-:end
-exit /b 0
+pause
+exit
