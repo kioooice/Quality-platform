@@ -1,14 +1,14 @@
 import React from 'react';
 import { Table, Card, Tag, Input, Row, Col, Statistic, Alert } from 'antd';
-import { SearchOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { SearchOutlined, SafetyCertificateOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 const products = [
-  { key: '1', id: 'P001', name: '汽车连接器A', process: '镀镍 + 镀金', mainRisk: '针孔、镀层厚度异常', stdImages: 24, docs: 8, historyAbnormal: 12, lastInspection: '2026-06-25' },
-  { key: '2', id: 'P002', name: '新能源端子B', process: '镀锡 + 镀镍', mainRisk: '漏镀、结合力不足', stdImages: 18, docs: 6, historyAbnormal: 8, lastInspection: '2026-06-24' },
-  { key: '3', id: 'P003', name: 'PCB连接器C', process: '镀金', mainRisk: '麻点、色差', stdImages: 32, docs: 12, historyAbnormal: 15, lastInspection: '2026-06-24' },
-  { key: '4', id: 'P004', name: '手机中框D', process: '镀镍 + 电泳', mainRisk: '色差、烧焦', stdImages: 28, docs: 10, historyAbnormal: 6, lastInspection: '2026-06-23' },
-  { key: '5', id: 'P005', name: '散热片E', process: '镀镍', mainRisk: '镀层厚度异常、盐雾异常', stdImages: 15, docs: 5, historyAbnormal: 9, lastInspection: '2026-06-22' },
-  { key: '6', id: 'P006', name: '精密五金件F', process: '镀铜 + 镀镍 + 镀铬', mainRisk: '结合力不足、针孔', stdImages: 20, docs: 9, historyAbnormal: 11, lastInspection: '2026-06-21' },
+  { key: '1', id: 'P001', name: '汽车连接器A', process: '镀镍 + 镀金', mainRisk: '针孔、镀层厚度异常', stdImages: 24, docs: 8, historyAbnormal: 12, lastInspection: '2026-06-25 09:20', recentEvent: 'QE-2026-001' },
+  { key: '2', id: 'P002', name: '新能源端子B', process: '镀锡 + 镀镍', mainRisk: '漏镀、结合力不足', stdImages: 18, docs: 6, historyAbnormal: 8, lastInspection: '2026-06-24', recentEvent: 'QE-2026-002' },
+  { key: '3', id: 'P003', name: 'PCB连接器C', process: '镀金', mainRisk: '麻点、色差', stdImages: 32, docs: 12, historyAbnormal: 15, lastInspection: '2026-06-24', recentEvent: 'QE-2026-003' },
+  { key: '4', id: 'P004', name: '手机中框D', process: '镀镍 + 电泳', mainRisk: '色差、烧焦', stdImages: 28, docs: 10, historyAbnormal: 6, lastInspection: '2026-06-23', recentEvent: 'QE-2026-004' },
+  { key: '5', id: 'P005', name: '散热片E', process: '镀镍', mainRisk: '镀层厚度异常、盐雾异常', stdImages: 15, docs: 5, historyAbnormal: 9, lastInspection: '2026-06-22', recentEvent: 'QE-2026-005' },
+  { key: '6', id: 'P006', name: '精密五金件F', process: '镀铜 + 镀镍 + 镀铬', mainRisk: '结合力不足、针孔', stdImages: 20, docs: 9, historyAbnormal: 11, lastInspection: '2026-06-21', recentEvent: '-' },
 ];
 
 const columns = [
@@ -19,8 +19,8 @@ const columns = [
   { title: '标准图片', dataIndex: 'stdImages', key: 'stdImages', width: 90, render: (v: number) => `${v}张` },
   { title: '研发资料', dataIndex: 'docs', key: 'docs', width: 90, render: (v: number) => `${v}份` },
   { title: '历史异常', dataIndex: 'historyAbnormal', key: 'historyAbnormal', width: 90, render: (v: number) => <Tag color={v > 10 ? 'red' : v > 5 ? 'orange' : 'green'}>{v}次</Tag> },
-  { title: '最近检测', dataIndex: 'lastInspection', key: 'lastInspection', width: 110 },
-  { title: '操作', key: 'action', width: 100, render: () => <a>查看详情</a> },
+  { title: '最近关联事件', dataIndex: 'recentEvent', key: 'recentEvent', width: 130, render: (v: string) => v === '-' ? <span style={{ color: '#ccc' }}>-</span> : <a>{v}</a> },
+  { title: '最近检测', dataIndex: 'lastInspection', key: 'lastInspection', width: 140 },
 ];
 
 const Products: React.FC = () => {
@@ -39,6 +39,27 @@ const Products: React.FC = () => {
         style={{ marginBottom: 24 }}
       />
 
+      {/* 重点产品：汽车连接器A 产品质量画像 */}
+      <Card title="重点产品画像：汽车连接器A" style={{ marginBottom: 24, borderLeft: '3px solid #1890ff' }} extra={<Tag color="red">当前关联事件 QE-2026-001</Tag>}>
+        <Row gutter={[24, 16]}>
+          <Col xs={24} sm={8}>
+            <div style={{ marginBottom: 12 }}><span style={{ color: '#888', fontSize: 12 }}>电镀工艺</span><div>镀镍 + 镀金</div></div>
+            <div><span style={{ color: '#888', fontSize: 12 }}>最近检测时间</span><div>2026-06-25 09:20</div></div>
+          </Col>
+          <Col xs={24} sm={8}>
+            <div style={{ marginBottom: 12 }}><span style={{ color: '#888', fontSize: 12 }}>高频异常</span><div><Tag color="red">针孔</Tag><Tag color="orange">镀层厚度异常</Tag></div></div>
+            <div><span style={{ color: '#888', fontSize: 12 }}>主要关联工序</span><div>前处理、镀镍、水洗</div></div>
+          </Col>
+          <Col xs={24} sm={8}>
+            <div style={{ marginBottom: 12 }}><span style={{ color: '#888', fontSize: 12 }}>标准图片</span><div>24张</div></div>
+            <div style={{ padding: '8px 12px', background: '#fffbe6', borderRadius: 4, fontSize: 13, borderLeft: '3px solid #fa8c16' }}>
+              <ExclamationCircleOutlined style={{ color: '#d46b08', marginRight: 4 }} />
+              AI建议：近期重点关注前处理稳定性
+            </div>
+          </Col>
+        </Row>
+      </Card>
+
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}><Card><Statistic title="产品总数" value={6} suffix="个" /></Card></Col>
         <Col xs={24} sm={12} lg={6}><Card><Statistic title="标准图片总量" value={137} suffix="张" valueStyle={{ color: '#1890ff' }} /></Card></Col>
@@ -51,7 +72,7 @@ const Products: React.FC = () => {
       </Card>
 
       <Card title="电镀产品知识库">
-        <Table columns={columns} dataSource={products} pagination={false} scroll={{ x: 1100 }} />
+        <Table columns={columns} dataSource={products} pagination={false} scroll={{ x: 1200 }} />
       </Card>
     </div>
   );

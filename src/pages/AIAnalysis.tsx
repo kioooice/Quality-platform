@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Row, Col, Tag, Button, Alert } from 'antd';
-import { RobotOutlined, FileSearchOutlined, CheckCircleOutlined, BookOutlined } from '@ant-design/icons';
+import { RobotOutlined, FileSearchOutlined, CheckCircleOutlined, BookOutlined, FileTextOutlined } from '@ant-design/icons';
 
 const eventInfo = {
   id: 'QE-2026-001',
@@ -8,7 +8,8 @@ const eventInfo = {
   batch: 'B-20260625-01',
   abnormal: '针孔',
   process: '镀镍 + 镀金',
-  severity: '高',
+  detectionSource: '外观检测 INS-2026-001',
+  confidence: '96.8%',
   status: '待工程师确认',
   detectedAt: '2026-06-25 09:20',
 };
@@ -24,7 +25,7 @@ const analysisBasis = [
   { label: '已对比标准图片', value: '24张' },
   { label: '已检索历史案例', value: '8条' },
   { label: '相似案例命中', value: '3条' },
-  { label: '相关工艺记录', value: '前处理、镀镍、水洗' },
+  { label: '相关工艺记录', value: '前处理、脱脂、水洗、镀镍' },
 ];
 
 const similarCases = [
@@ -36,8 +37,9 @@ const similarCases = [
 const AIAnalysis: React.FC = () => {
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <h2>AI辅助异常分析</h2>
+      <div style={{ marginBottom: 16 }}>
+        <h2 style={{ margin: 0 }}>AI辅助异常分析</h2>
+        <span style={{ color: '#666' }}>QE-2026-001 汽车连接器A 针孔异常</span>
       </div>
 
       <Alert
@@ -68,6 +70,14 @@ const AIAnalysis: React.FC = () => {
             <div style={{ marginBottom: 12 }}>
               <div style={{ color: '#888', fontSize: 12, marginBottom: 2 }}>异常类型</div>
               <div><Tag color="red">{eventInfo.abnormal}</Tag></div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ color: '#888', fontSize: 12, marginBottom: 2 }}>检测来源</div>
+              <div>{eventInfo.detectionSource}</div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ color: '#888', fontSize: 12, marginBottom: 2 }}>AI置信度</div>
+              <div style={{ fontWeight: 600, color: '#cf1322' }}>{eventInfo.confidence}</div>
             </div>
             <div style={{ marginBottom: 12 }}>
               <div style={{ color: '#888', fontSize: 12, marginBottom: 2 }}>电镀工艺</div>
@@ -128,8 +138,8 @@ const AIAnalysis: React.FC = () => {
         <Row gutter={[16, 16]}>
           {similarCases.map((c) => (
             <Col xs={24} md={8} key={c.id}>
-              <Card size="small" style={{ background: '#fafafa' }}>
-                <div style={{ fontWeight: 600, marginBottom: 8 }}>{c.id}</div>
+              <Card size="small" style={{ background: c.id === 'CASE-2026-018' ? '#fff7e6' : '#fafafa', border: c.id === 'CASE-2026-018' ? '1px solid #fa8c16' : undefined }}>
+                <div style={{ fontWeight: 600, marginBottom: 8 }}>{c.id} {c.id === 'CASE-2026-018' && <Tag color="orange">最佳匹配</Tag>}</div>
                 <div style={{ marginBottom: 4 }}><span style={{ color: '#888' }}>产品：</span>{c.product}</div>
                 <div style={{ marginBottom: 4 }}><span style={{ color: '#888' }}>异常：</span><Tag color="red">{c.abnormal}</Tag></div>
                 <div style={{ marginBottom: 4 }}><span style={{ color: '#888' }}>根因：</span>{c.rootCause}</div>
@@ -143,10 +153,11 @@ const AIAnalysis: React.FC = () => {
 
       {/* 操作按钮 */}
       <Card>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Button type="primary" icon={<CheckCircleOutlined />}>工程师确认</Button>
           <Button icon={<FileSearchOutlined />}>生成处理记录</Button>
           <Button icon={<BookOutlined />}>加入案例中心</Button>
+          <Button icon={<FileTextOutlined />}>生成追溯报告</Button>
         </div>
       </Card>
     </div>
