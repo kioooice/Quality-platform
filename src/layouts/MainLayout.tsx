@@ -43,6 +43,7 @@ const userMenuItems: MenuProps['items'] = [
 ];
 
 const roleColorMap: Record<RoleId, string> = {
+  executive: '#eb2f96',
   admin: '#1890ff',
   inspector: '#52c41a',
   quality_engineer: '#722ed1',

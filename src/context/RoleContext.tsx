@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
-export type RoleId = 'admin' | 'inspector' | 'quality_engineer' | 'process_engineer';
+export type RoleId = 'executive' | 'admin' | 'inspector' | 'quality_engineer' | 'process_engineer';
 
 export interface RoleConfig {
   id: RoleId;
@@ -13,11 +13,18 @@ export interface RoleConfig {
 
 export const roles: RoleConfig[] = [
   {
+    id: 'executive',
+    name: '经营决策层',
+    avatar: '决',
+    workspaceTitle: '质量经营总览',
+    workspaceSubtitle: '面向质量成本、异常风险、处理效率与知识资产沉淀的经营决策看板',
+  },
+  {
     id: 'admin',
-    name: '管理员',
-    avatar: '管',
-    workspaceTitle: '电镀质量运营中心',
-    workspaceSubtitle: '面向质量事件、AI分析、案例沉淀与追溯报告的统一运营看板',
+    name: '质量负责人',
+    avatar: '质',
+    workspaceTitle: '质量运营工作台',
+    workspaceSubtitle: '面向质量事件跟进、AI分析确认、案例审核与报告追溯的质量负责人工作台',
   },
   {
     id: 'inspector',
@@ -29,14 +36,14 @@ export const roles: RoleConfig[] = [
   {
     id: 'quality_engineer',
     name: '质量工程师',
-    avatar: '质',
+    avatar: '工',
     workspaceTitle: '质量事件处理工作台',
     workspaceSubtitle: '面向异常分析、根因确认、处置方案与案例沉淀的质量工程师工作台',
   },
   {
     id: 'process_engineer',
     name: '工艺工程师',
-    avatar: '工',
+    avatar: '艺',
     workspaceTitle: '工艺异常协同工作台',
     workspaceSubtitle: '面向电镀工艺参数、异常关联、原因排查与改善验证的协同工作台',
   },

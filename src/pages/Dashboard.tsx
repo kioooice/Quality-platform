@@ -9,6 +9,9 @@ import {
   FileTextOutlined,
   ExperimentOutlined,
   ToolOutlined,
+  SafetyCertificateOutlined,
+  RiseOutlined,
+  BookOutlined,
 } from '@ant-design/icons';
 import { useRole } from '../context/RoleContext';
 
@@ -65,7 +68,157 @@ const MobileAITaskList: React.FC<{ data: Array<{ id: string; event: string; prod
   );
 };
 
-// ========== Admin View ==========
+// ========== Executive View ==========
+const ExecutiveView: React.FC = () => {
+  const isMobile = useIsMobile();
+
+  const highRiskProducts = [
+    { name: '汽车连接器A', abnormals: '针孔、镀层厚度异常', risk: '高', suggestion: '重点复查前处理稳定性' },
+    { name: '新能源端子B', abnormals: '漏镀、色差', risk: '高', suggestion: '关注脱脂和水洗段' },
+    { name: 'PCB连接器C', abnormals: '麻点', risk: '中', suggestion: '关注清洗与镀镍稳定性' },
+  ];
+
+  return (
+    <>
+      {/* 核心指标卡片 */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} sm={12} md={8}>
+          <Card size="small">
+            <Statistic title="本月质量事件" value={12} suffix="件" valueStyle={{ color: '#cf1322', fontSize: isMobile ? 20 : 24 }} prefix={<ExclamationCircleOutlined />} />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={8}>
+          <Card size="small">
+            <Statistic title="重复异常下降" value={25} suffix="%" valueStyle={{ color: '#3f8600', fontSize: isMobile ? 20 : 24 }} prefix={<RiseOutlined />} />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={8}>
+          <Card size="small">
+            <Statistic title="平均排查时间" value={4.2} suffix="小时" valueStyle={{ fontSize: isMobile ? 20 : 24 }} prefix={<ThunderboltOutlined />} />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={8}>
+          <Card size="small">
+            <Statistic title="预计节省排查工时" value={128} suffix="小时" valueStyle={{ color: '#1890ff', fontSize: isMobile ? 20 : 24 }} />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={8}>
+          <Card size="small">
+            <Statistic title="高风险产品" value={3} suffix="个" valueStyle={{ color: '#d46b08', fontSize: isMobile ? 20 : 24 }} prefix={<WarningOutlined />} />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={8}>
+          <Card size="small">
+            <Statistic title="本月新增经验案例" value={12} suffix="条" valueStyle={{ color: '#722ed1', fontSize: isMobile ? 20 : 24 }} prefix={<BookOutlined />} />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* 质量经营结论 */}
+      <Card title="质量经营结论" style={{ marginBottom: 24 }}>
+        <div style={{ lineHeight: 1.8, color: '#333', fontSize: 14 }}>
+          本月质量事件数量较上月下降，重复异常次数减少，AI辅助分析与案例复用已在针孔、漏镀、色差等异常中产生效果。当前主要风险集中在<b>汽车连接器A</b>与<b>新能源端子B</b>，建议重点关注前处理、脱脂、水洗等工艺稳定性。
+        </div>
+      </Card>
+
+      {/* 质量效率改善概览 */}
+      <Card title="质量效率改善概览" style={{ marginBottom: 24 }}>
+        <Row gutter={[16, 16]}>
+          {[
+            { label: '排查效率', value: '平均排查时间 4.2 小时', desc: '较上月下降 38%，AI辅助缩短异常定位时间' },
+            { label: '重复分析', value: '减少 36 次', desc: '相似案例复用提升，避免重复排查相同根因' },
+            { label: '报告效率', value: '自动生成报告 18 份', desc: '减少人工整理时间，提升报告输出速度' },
+            { label: '经验沉淀', value: '新增案例 12 条', desc: '企业质量知识资产持续增长' },
+          ].map((item, i) => (
+            <Col xs={24} sm={12} key={i}>
+              <Card size="small" style={{ background: '#fafafa' }}>
+                <div style={{ color: '#888', fontSize: 12, marginBottom: 4 }}>{item.label}</div>
+                <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>{item.value}</div>
+                <div style={{ color: '#666', fontSize: 13 }}>{item.desc}</div>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </Card>
+
+      {/* 高风险产品排行 + 重点事件追踪 */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} lg={12}>
+          <Card title={<><WarningOutlined style={{ color: '#d46b08', marginRight: 8 }} />高风险产品排行</>} size="small">
+            {highRiskProducts.map((p, i) => (
+              <div key={i} style={{ padding: '10px 0', borderBottom: i < 2 ? '1px solid #f0f0f0' : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontWeight: 600 }}>{p.name}</span>
+                  <Tag color={p.risk === '高' ? 'red' : 'orange'}>风险 {p.risk}</Tag>
+                </div>
+                <div style={{ fontSize: 13, color: '#666', marginBottom: 2 }}>主要异常：{p.abnormals}</div>
+                <div style={{ fontSize: 12, color: '#999' }}>建议：{p.suggestion}</div>
+              </div>
+            ))}
+          </Card>
+        </Col>
+        <Col xs={24} lg={12}>
+          <Card title={<><ExclamationCircleOutlined style={{ color: '#cf1322', marginRight: 8 }} />重点事件追踪</>} size="small">
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontWeight: 600 }}>QE-2026-001 汽车连接器A针孔异常</span>
+                <Tag color="orange">待工程师确认</Tag>
+              </div>
+              <div style={{ fontSize: 13, color: '#666', marginBottom: 2 }}>影响：同类异常本周重复发生 12 次</div>
+              <div style={{ fontSize: 12, color: '#1890ff' }}>下一步：确认根因并沉淀标准处理案例</div>
+            </div>
+            <div style={{ padding: '12px 0', borderTop: '1px solid #f0f0f0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontWeight: 600 }}>QE-2026-002 新能源端子B漏镀异常</span>
+                <Tag color="orange">待工程师确认</Tag>
+              </div>
+              <div style={{ fontSize: 13, color: '#666', marginBottom: 2 }}>影响：可能影响同批次产品交付</div>
+              <div style={{ fontSize: 12, color: '#1890ff' }}>下一步：复查前处理工序</div>
+            </div>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* 企业质量知识资产 */}
+      <Card title={<><SafetyCertificateOutlined style={{ marginRight: 8 }} />企业质量知识资产</>} extra={<span style={{ color: '#999', fontSize: 12 }}>用于支撑异常分析、案例复用和新人能力提升</span>}>
+        <Row gutter={[16, 16]}>
+          <Col xs={12} sm={8} md={4}>
+            <div style={{ textAlign: 'center', padding: '12px 0' }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#1890ff' }}>156</div>
+              <div style={{ color: '#666', fontSize: 12 }}>产品知识资料（项）</div>
+            </div>
+          </Col>
+          <Col xs={12} sm={8} md={5}>
+            <div style={{ textAlign: 'center', padding: '12px 0' }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#722ed1' }}>842</div>
+              <div style={{ color: '#666', fontSize: 12 }}>标准图片（张）</div>
+            </div>
+          </Col>
+          <Col xs={12} sm={8} md={5}>
+            <div style={{ textAlign: 'center', padding: '12px 0' }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#3f8600' }}>126</div>
+              <div style={{ color: '#666', fontSize: 12 }}>历史案例（条）</div>
+            </div>
+          </Col>
+          <Col xs={12} sm={8} md={5}>
+            <div style={{ textAlign: 'center', padding: '12px 0' }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#eb2f96' }}>18</div>
+              <div style={{ color: '#666', fontSize: 12 }}>高复用案例（条）</div>
+            </div>
+          </Col>
+          <Col xs={12} sm={8} md={5}>
+            <div style={{ textAlign: 'center', padding: '12px 0' }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#fa8c16' }}>12</div>
+              <div style={{ color: '#666', fontSize: 12 }}>本月新增经验（条）</div>
+            </div>
+          </Col>
+        </Row>
+      </Card>
+    </>
+  );
+};
+
+// ========== Admin / Quality Manager View ==========
 const AdminView: React.FC = () => {
   const isMobile = useIsMobile();
   const pendingEvents = [
@@ -381,6 +534,7 @@ const Dashboard: React.FC = () => {
   const { currentRole } = useRole();
 
   const ViewMap: Record<string, React.FC> = {
+    executive: ExecutiveView,
     admin: AdminView,
     inspector: InspectorView,
     quality_engineer: QualityEngineerView,
